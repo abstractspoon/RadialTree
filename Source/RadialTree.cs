@@ -14,7 +14,7 @@ namespace RadialTree
         /// <param name="circleRadius">Distance between the root node and first children.</param>
         /// <param name="deltaDistance">Distance between other child nodes.</param>
         /// <param name="outputGraph">Calculated positions for the nodes.</param>
-        public static void RadialPositions<T>(TreeNode<T> node, float alfa, float beta, float circleRadius, float deltaDistance, List<RadialPoint<T>> outputGraph)
+        public static void RadialPositions<T>(TreeNode<T> node, float startAngleRad, float endAngleRad, float circleRadius, float deltaDistance, List<RadialPoint<T>> outputGraph)
         {
             //check if node is root of the tree
             if (node.IsRoot)
@@ -31,14 +31,14 @@ namespace RadialTree
             }
             //Depth of node starting from 0
             int depthOfVertex = node.Level;
-            float theta = alfa;
+            float theta = startAngleRad;
             float radius = circleRadius + (deltaDistance * depthOfVertex);
 
-            int leavesNumber = BreatFirstSearch(node);
+            int leavesNumber = BreadthFirstSearch(node);
             foreach (var child in node.Children)
             {
-                float lambda = BreatFirstSearch(child);
-                float mi = theta + (lambda / leavesNumber * (beta - alfa));
+                float lambda = BreadthFirstSearch(child);
+                float mi = theta + (lambda / leavesNumber * (endAngleRad - startAngleRad));
 
                 float x = (float)(radius * Math.Cos((theta + mi) / 2.0));
                 float y = (float)(radius * Math.Sin((theta + mi) / 2.0));
@@ -63,7 +63,7 @@ namespace RadialTree
             }
         }
 
-        private static int BreatFirstSearch<T>(TreeNode<T> root)
+        private static int BreadthFirstSearch<T>(TreeNode<T> root)
         {
             var visited = new List<TreeNode<T>>();
             var queue = new Queue<TreeNode<T>>();
