@@ -17,19 +17,26 @@ namespace RadialTree
 		{
 			InitializeComponent();
 
-			int nNode = 1;
+			int nNode = 1, nMinNodes = 3, nMaxNodes = 6;
+			Random rnd = new Random();
 
-			for (int i = 0; i < 10; i++)
+			int iNodes = rnd.Next(nMinNodes, nMaxNodes);
+
+			for (int i = 0; i < iNodes; i++)
 			{
 				var iNode = m_TreeRoot.AddChild(nNode.ToString());
 				nNode++;
 
-				for (int j = 0; j < 10; j++)
+				int jNodes = rnd.Next(nMinNodes, nMaxNodes);
+
+				for (int j = 0; j < jNodes; j++)
 				{
 					var jNode = iNode.AddChild(nNode.ToString());
 					nNode++;
 
-					for (int k = 0; k < 10; k++)
+					int kNodes = rnd.Next(nMinNodes, nMaxNodes);
+
+					for (int k = 0; k < kNodes; k++)
 					{
 						var kNode = jNode.AddChild(nNode.ToString());
 					}
@@ -47,20 +54,30 @@ namespace RadialTree
 			if (m_TreeRoot.Count > 0)
 			{
 				float centreX = ClientSize.Width / 2, centreY = ClientSize.Height / 2;
+				float radius = 15;
 
 				foreach (var c1 in m_TreeRoot.Children)
 				{
-					e.Graphics.FillEllipse(Brushes.Black, centreX + c1.Point.X, centreY + c1.Point.Y, 5, 5);
+					float centre1X = centreX + c1.Point.X;
+					float centre1Y = centreY + c1.Point.Y;
+
+					e.Graphics.FillEllipse(Brushes.Black, centre1X - radius / 2, centre1Y - radius / 2, radius, radius);
 
 					foreach (var c2 in c1.Children)
 					{
-						e.Graphics.FillEllipse(Brushes.Blue, centreX + c2.Point.X, centreY + c2.Point.Y, 5, 5);
-						e.Graphics.DrawLine(Pens.Purple, centreX + c1.Point.X, centreY + c1.Point.Y, centreX + c2.Point.X, centreY + c2.Point.Y);
+						float centre2X = centreX + c2.Point.X;
+						float centre2Y = centreY + c2.Point.Y;
+
+						e.Graphics.FillEllipse(Brushes.Blue, centre2X - radius / 2, centre2Y - radius / 2, radius, radius);
+						e.Graphics.DrawLine(Pens.Purple, centre1X, centre1Y, centre2X, centre2Y);
 
 						foreach (var c3 in c2.Children)
 						{
-							e.Graphics.FillEllipse(Brushes.Red, centreX + c3.Point.X, centreY + c3.Point.Y, 5, 5);
-							e.Graphics.DrawLine(Pens.Teal, centreX + c2.Point.X, centreY + c2.Point.Y, centreX + c3.Point.X, centreY + c3.Point.Y);
+							float centre3X = centreX + c3.Point.X;
+							float centre3Y = centreY + c3.Point.Y;
+
+							e.Graphics.FillEllipse(Brushes.Red, centre3X - radius / 2, centre3Y - radius / 2, radius, radius);
+							e.Graphics.DrawLine(Pens.Teal, centre2X, centre2Y, centre3X, centre3Y);
 						}
 					}
 				}
