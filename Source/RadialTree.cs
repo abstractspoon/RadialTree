@@ -21,14 +21,10 @@ namespace RadialTree
             {
                 node.Point.X = 0;
                 node.Point.Y = 0;
-                outputGraph.Add(new RadialPoint<T>
-                {
-                    Node = node,
-                    Point = new Point
-                    {
-                        X = 0,
-                        Y = 0
-                    },
+				outputGraph.Add(new RadialPoint<T>
+				{
+					Node = node,
+					Point = new Point(0f, 0f),
                     ParentPoint = null
                 });
 
@@ -41,7 +37,7 @@ namespace RadialTree
             int leavesNumber = BreatFirstSearch(node);
             foreach (var child in node.Children)
             {
-                int lambda = BreatFirstSearch(child);
+                float lambda = BreatFirstSearch(child);
                 float mi = theta + (lambda / leavesNumber * (beta - alfa));
 
                 float x = (float)(radius * Math.Cos((theta + mi) / 2.0));
@@ -53,12 +49,7 @@ namespace RadialTree
                 outputGraph.Add(new RadialPoint<T>
                 {
                     Node = child,
-                    Point = new Point
-                    {
-                        X = x,
-                        Y = y,
-                        Radius = radius
-                    },
+                    Point = new Point(x, y, radius),
                     ParentPoint = node.Point
                 });
 
