@@ -17,7 +17,9 @@ namespace RadialTree
 		{
 			InitializeComponent();
 
-			int nNode = 1, nMinNodes = 3, nMaxNodes = 6;
+			this.CenterToScreen();
+
+			int nNode = 1, nMinNodes = 2, nMaxNodes = 6;
 			Random rnd = new Random();
 
 			int iNodes = rnd.Next(nMinNodes, nMaxNodes);
