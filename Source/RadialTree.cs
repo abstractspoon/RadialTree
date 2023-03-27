@@ -14,25 +14,27 @@ namespace RadialTree
         /// <param name="circleRadius">Distance between the root node and first children.</param>
         /// <param name="deltaDistance">Distance between other child nodes.</param>
         /// <param name="outputGraph">Calculated positions for the nodes.</param>
-        public static void RadialPositions<T>(TreeNode<T> node, float startAngleRad, float endAngleRad, float circleRadius, float deltaDistance, List<RadialPoint<T>> outputGraph)
+        public static void RadialPositions<T>(TreeNode<T> node, float startAngleRad, float endAngleRad, float circleRadius, float radiusIncrement/*, List<RadialPoint<T>> outputGraph*/)
         {
             //check if node is root of the tree
             if (node.IsRoot)
             {
                 node.Point.X = 0;
                 node.Point.Y = 0;
+/*
 				outputGraph.Add(new RadialPoint<T>
 				{
 					Node = node,
 					Point = new Point(0f, 0f),
                     ParentPoint = null
                 });
+*/
 
             }
             //Depth of node starting from 0
             int depthOfVertex = node.Level;
             float theta = startAngleRad;
-            float radius = circleRadius + (deltaDistance * depthOfVertex);
+            float radius = circleRadius + (radiusIncrement * depthOfVertex);
 
             int leavesNumber = BreadthFirstSearch(node);
             foreach (var child in node.Children)
@@ -46,18 +48,20 @@ namespace RadialTree
                 child.Point.X = x;
                 child.Point.Y = y;
 
+/*
                 outputGraph.Add(new RadialPoint<T>
                 {
                     Node = child,
                     Point = new Point(x, y, radius),
                     ParentPoint = node.Point
                 });
+*/
 
                 if (child.Children.Count > 0)
                 {
                     child.Point.Y = y;
                     child.Point.X = x;
-                    RadialPositions(child, theta, mi, circleRadius, deltaDistance, outputGraph);
+                    RadialPositions(child, theta, mi, circleRadius, radiusIncrement/*, outputGraph*/);
                 }
                 theta = mi;
             }

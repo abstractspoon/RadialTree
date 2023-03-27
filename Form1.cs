@@ -19,7 +19,7 @@ namespace RadialTree
 
 			this.CenterToScreen();
 
-			int nNode = 1, nMinNodes = 2, nMaxNodes = 6;
+			int nNode = 1, nMinNodes = 3, nMaxNodes = 6;
 			Random rnd = new Random();
 
 			int iNodes = rnd.Next(nMinNodes, nMaxNodes);
@@ -45,8 +45,8 @@ namespace RadialTree
 				}
 			}
 
-			var listOutput = new List<RadialPoint<string>>();
-			RadialTree.RadialPositions(m_TreeRoot, 0, (float)(2 * Math.PI), 50, 100, listOutput);
+			//var listOutput = new List<RadialPoint<string>>();
+			RadialTree.RadialPositions(m_TreeRoot, 0, (float)(2 * Math.PI), 50, 100/*, listOutput*/);
 		}
 
 		protected override void OnPaint(PaintEventArgs e)
