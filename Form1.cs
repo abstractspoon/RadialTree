@@ -11,7 +11,7 @@ namespace RadialTree
 {
 	public partial class Form1 : Form
 	{
-		TreeNode<string> m_TreeRoot = new TreeNode<string>("");
+		TreeNode<uint> m_TreeRoot = new TreeNode<uint>(0);
 		
 		public Form1()
 		{
@@ -19,35 +19,35 @@ namespace RadialTree
 
 			this.CenterToScreen();
 
-			int nNode = 1, nMinNodes = 3, nMaxNodes = 6;
+			uint nNode = 1;
+			const int nMinNodes = 3, nMaxNodes = 6;
 			Random rnd = new Random();
 
 			int iNodes = rnd.Next(nMinNodes, nMaxNodes);
 
 			for (int i = 0; i < iNodes; i++)
 			{
-				var iNode = m_TreeRoot.AddChild(nNode.ToString());
+				var iNode = m_TreeRoot.AddChild(nNode);
 				nNode++;
 
 				int jNodes = rnd.Next(nMinNodes, nMaxNodes);
 
 				for (int j = 0; j < jNodes; j++)
 				{
-					var jNode = iNode.AddChild(nNode.ToString());
+					var jNode = iNode.AddChild(nNode);
 					nNode++;
 
 					int kNodes = rnd.Next(nMinNodes, nMaxNodes);
 
 					for (int k = 0; k < kNodes; k++)
 					{
-						var kNode = jNode.AddChild(nNode.ToString());
+						var kNode = jNode.AddChild(nNode);
 					}
 				}
 			}
 
-			RadialTree.CalculatePositions(m_TreeRoot, 50, 100);
-			//RadialTree.RadialPositions(m_TreeRoot, 0, (float)(2 * Math.PI), 50, 100);
-			//RadialTree.RadialPositions(m_TreeRoot, 0, (float)(2 * Math.PI), 50, -20);
+			RadialTree.CalculatePositions(m_TreeRoot, 50, -50);
+			//RadialTree.CalculatePositions(m_TreeRoot, 50, 100);
 		}
 
 		protected override void OnPaint(PaintEventArgs e)

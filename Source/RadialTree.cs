@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 
 namespace RadialTree
@@ -12,10 +13,25 @@ namespace RadialTree
 
 			if (radiusIncrement < 0)
 			{
-				int leavesNumber = BreadthFirstSearch(rootNode);
+				float spacing = -radiusIncrement;
 
-				float outerRadius = (leavesNumber * -radiusIncrement) / (float)(2 * Math.PI);
+				// Count the nodes at every level
+				var counts = new List<int>();
+				int numLevels = CountNodes(rootNode, counts);
 
+				// Convert the counts into equivalent minimum radii
+				// and normalise
+				var radii = new List<float>();
+
+				for (int level = 0; level < numLevels; level++)
+				{
+					radii.Add((counts[level] * spacing) / (float)(2 * Math.PI));
+					radii[level] /= (level + 1);
+				}
+
+				// Get the maximum
+				initialRadius = radii[0];
+				radiusIncrement = radii.Max();
 			}
 
 			CalculatePositions<T>(rootNode, 0, (float)(2 * Math.PI), initialRadius, radiusIncrement);
@@ -49,6 +65,21 @@ namespace RadialTree
                 theta = mi;
             }
         }
+
+		protected static int CountNodes<T>(TreeNode<T> node, IList<int> counts)
+		{
+			if (node.Level >= counts.Count)
+				counts.Add(0);
+
+			counts[node.Level]++;
+
+            foreach (var child in node.Children)
+            {
+				CountNodes(child, counts);
+            }
+
+			return counts.Count;
+		}
 
 /*
         /// <summary>
