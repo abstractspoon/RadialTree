@@ -5,22 +5,35 @@ namespace RadialTree
 {
     public class RadialTree
     {
-        public static void RadialPositions<T>(TreeNode<T> node, float startAngleRad, float endAngleRad, float circleRadius, float radiusIncrement)
-        {
-            // Depth of node starting from 0
-            int depthOfVertex = node.Level;
-            float theta = startAngleRad;
-            float radius = circleRadius + (radiusIncrement * depthOfVertex);
+		public static bool CalculatePositions<T>(TreeNode<T> rootNode, float initialRadius, float radiusIncrement)
+		{
+			if (!rootNode.IsRoot)
+				return false;
 
-            int leavesNumber = BreadthFirstSearch(node);
+			if (radiusIncrement < 0)
+			{
+				int leavesNumber = BreadthFirstSearch(rootNode);
+
+				float outerRadius = (leavesNumber * -radiusIncrement) / (float)(2 * Math.PI);
+
+			}
+
+			CalculatePositions<T>(rootNode, 0, (float)(2 * Math.PI), initialRadius, radiusIncrement);
+			return true;
+		}
+
+		protected static void CalculatePositions<T>(TreeNode<T> node, float startRadians, float endRadians, float circleRadius, float radiusIncrement)
+        {
+            float theta = startRadians;
+			int leavesNumber = BreadthFirstSearch(node);
 
             foreach (var child in node.Children)
             {
                 float lambda = BreadthFirstSearch(child);
-                float mi = theta + (lambda / leavesNumber * (endAngleRad - startAngleRad));
+                float mi = theta + ((lambda / leavesNumber) * (endRadians - startRadians));
 
-                float x = (float)(radius * Math.Cos((theta + mi) / 2.0));
-                float y = (float)(radius * Math.Sin((theta + mi) / 2.0));
+                float x = (float)(circleRadius * Math.Cos((theta + mi) / 2.0));
+                float y = (float)(circleRadius * Math.Sin((theta + mi) / 2.0));
 
                 child.Point.X = x;
                 child.Point.Y = y;
@@ -29,7 +42,8 @@ namespace RadialTree
                 {
                     child.Point.Y = y;
                     child.Point.X = x;
-                    RadialPositions(child, theta, mi, circleRadius, radiusIncrement);
+
+                    CalculatePositions(child, theta, mi, circleRadius + radiusIncrement, radiusIncrement);
                 }
 
                 theta = mi;

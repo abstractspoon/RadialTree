@@ -45,8 +45,9 @@ namespace RadialTree
 				}
 			}
 
-			//var listOutput = new List<RadialPoint<string>>();
-			RadialTree.RadialPositions(m_TreeRoot, 0, (float)(2 * Math.PI), 50, 100/*, listOutput*/);
+			RadialTree.CalculatePositions(m_TreeRoot, 50, 100);
+			//RadialTree.RadialPositions(m_TreeRoot, 0, (float)(2 * Math.PI), 50, 100);
+			//RadialTree.RadialPositions(m_TreeRoot, 0, (float)(2 * Math.PI), 50, -20);
 		}
 
 		protected override void OnPaint(PaintEventArgs e)
