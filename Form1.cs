@@ -32,7 +32,7 @@ namespace RadialTreeDemo
 		const int NodeWidth = 20;
 		const int NodeSpacing = 0;//5;
 
-		readonly float InitialRadius = 50f;
+		readonly float InitialRadius = (NodeWidth + NodeWidth + NodeSpacing);
 		readonly float RadialIncrement = -(NodeHeight + NodeWidth + NodeSpacing);
 
 		public Form1()
