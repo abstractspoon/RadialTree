@@ -179,17 +179,5 @@ namespace RadialTree
         {
             _children.Clear();
         }
-
-
-		public System.Drawing.Point GetPosition(System.Drawing.Size offset)
-		{
-			return Point.GetPosition(offset);
-		}
-
-		public System.Drawing.Rectangle GetRectangle(System.Drawing.Size size, System.Drawing.Size offset)
-		{
-			return Point.GetRectangle(size, offset);
-		}
-
 	}
 }
