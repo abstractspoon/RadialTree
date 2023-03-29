@@ -37,21 +37,21 @@ namespace RadialTreeDemo
 
 			for (int i = 0; i < iNodes; i++)
 			{
-				var iNode = rootNode.AddChild(new CustomType(nNode, Brushes.Black, Pens.Purple));
+				var iNode = rootNode.AddChild(new CustomType(nNode, Pens.Black, null, Pens.Purple));
 				nNode++;
 
 				int jNodes = rnd.Next(nMinNodes, nMaxNodes);
 
 				for (int j = 0; j < jNodes; j++)
 				{
-					var jNode = iNode.AddChild(new CustomType(nNode, Brushes.Blue, Pens.Teal));
+					var jNode = iNode.AddChild(new CustomType(nNode, Pens.Blue, null, Pens.Teal));
 					nNode++;
 
 					int kNodes = rnd.Next(0, nMaxNodes);
 
 					for (int k = 0; k < kNodes; k++)
 					{
-						var kNode = jNode.AddChild(new CustomType(nNode, Brushes.Red, null));
+						var kNode = jNode.AddChild(new CustomType(nNode, Pens.Red, null, null));
 					}
 				}
 			}
@@ -71,13 +71,18 @@ namespace RadialTreeDemo
 
 		private void ShowRootNode(bool show)
 		{
-			m_NodeControl.RootNode.Data.FillBrush = (show ? Brushes.Gray : null);
+			m_NodeControl.RootNode.Data.NodeBrush = (show ? Brushes.Gray : null);
 			m_NodeControl.RootNode.Data.LinePen = (show ? Pens.Gray : null);
 
 			if (show)
-				m_NodeControl.InitialRadius = 50f;
- 			else
+			{
+				m_NodeControl.InitialRadius = m_NodeControl.DefaultInitialRadius;
+				m_NodeControl.RadialIncrementOrSpacing = m_NodeControl.DefaultInitialRadius;
+			}
+			else
+			{
 				m_NodeControl.InitialRadius = ((m_NodeControl.RootNode.Count * m_NodeControl.RadialIncrementOrSpacing) / (float)(2 * Math.PI));
+			}
 		}
 	}
 }

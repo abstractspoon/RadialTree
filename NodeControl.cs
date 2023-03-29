@@ -11,8 +11,7 @@ namespace RadialTreeDemo
 {
 	public partial class NodeControl : UserControl
 	{
-		public int NodeHeight = 10;
-		public int NodeWidth = 20;
+		public Size NodeSize = new Size(50, 25);
 		public int NodeSpacing = 5;
 
 		float m_InitialRadius = 50f;
@@ -28,8 +27,8 @@ namespace RadialTreeDemo
 
 		public NodeControl()
 		{
-			m_InitialRadius = (NodeWidth + NodeWidth + NodeSpacing);
-			m_RadialIncrementOrSpacing = (NodeWidth + NodeWidth + NodeSpacing);
+			m_InitialRadius = DefaultInitialRadius;
+			m_RadialIncrementOrSpacing = m_InitialRadius;
 
 			InitializeComponent();
 		}
@@ -78,6 +77,11 @@ namespace RadialTreeDemo
 			}
 		}
 
+		public float DefaultInitialRadius
+		{
+			get { return ((2 * NodeSize.Width) + NodeSpacing); }
+		}
+
 		public float InitialRadius
 		{
 			get { return m_InitialRadius; }
@@ -122,17 +126,22 @@ namespace RadialTreeDemo
 
 		protected void DrawNode(Graphics graphics, RadialTree.TreeNode<CustomType> node, Size offset)
 		{
-			var nodePos = GetNodePosition(node, offset);
-			var nodeRect = GetNodeRectangle(node, offset);
+			var nodePos = node.GetPosition(offset);
+			var nodeRect = node.GetRectangle(NodeSize, offset);
 
-			if (node.Data.FillBrush != null)
+			if (node.Data.NodeBrush != null)
 			{
-				graphics.FillRectangle(node.Data.FillBrush, nodeRect);
+				graphics.FillRectangle(node.Data.NodeBrush, nodeRect);
+			}
+
+			if (node.Data.NodePen != null)
+			{
+				graphics.DrawRectangle(node.Data.NodePen, nodeRect);
 			}
 
 			if ((node.Parent != null) && (node.Parent.Data.LinePen != null))
 			{
-				var parentPos = GetNodePosition(node.Parent, offset);
+				var parentPos = node.Parent.GetPosition(offset);
 
 				graphics.DrawLine(node.Parent.Data.LinePen, nodePos, parentPos);
 			}
@@ -143,21 +152,9 @@ namespace RadialTreeDemo
 			}
 		}
 
-		public Rectangle GetNodeRectangle(RadialTree.TreeNode<CustomType> node, Size offset)
-		{
-			var pos = GetNodePosition(node, offset);
-
-			return new Rectangle((pos.X - NodeWidth / 2), (pos.Y - NodeHeight / 2), NodeWidth, NodeHeight);
-		}
-
-		public System.Drawing.Point GetNodePosition(RadialTree.TreeNode<CustomType> node, Size offset)
-		{
-			return new System.Drawing.Point((offset.Width + (int)node.Point.X), (offset.Height + (int)node.Point.Y));
-		}
-
 		public void RecalcLayout()
 		{
-			if (m_EnableLayoutUpdates)
+			if (m_EnableLayoutUpdates && (m_RadialTree != null))
 			{
 				m_RadialTree.CalculatePositions(m_InitialRadius, m_RadialIncrementOrSpacing);
 				Invalidate();
@@ -168,16 +165,17 @@ namespace RadialTreeDemo
 
 	public class CustomType
 	{
-		public CustomType(uint id, Brush fillBrush = null, Pen linePen = null)
+		public CustomType(uint id, Pen nodePen = null, Brush nodeBrush = null, Pen linePen = null)
 		{
 			Id = id;
-			FillBrush = fillBrush;
+			NodePen = nodePen;
+			NodeBrush = nodeBrush;
 			LinePen = linePen;
 		}
 
 		public readonly uint Id;
-		public Brush FillBrush;
-		public Pen LinePen;
+		public Brush NodeBrush;
+		public Pen NodePen, LinePen;
 	}
 
 }
