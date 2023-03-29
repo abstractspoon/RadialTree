@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 
-namespace RadialTree
+namespace RadialTreeDemo
 {
 	public partial class Form1 : Form
 	{
@@ -25,15 +25,20 @@ namespace RadialTree
 			public Pen LinePen;
 		}
 		
-		TreeNode<CustomType> m_TreeRoot = null;
-		RadialTree<CustomType> m_RadialTree = null;
+		RadialTree.TreeNode<CustomType> m_TreeRoot = null;
+		RadialTree.RadialTree<CustomType> m_RadialTree = null;
+
+		const int NodeHeight = 10;
+		const int NodeWidth = 20;
+		const int NodeSpacing = 0;//5;
+
+		readonly float InitialRadius = 50f;
+		readonly float RadialIncrement = -(NodeHeight + NodeWidth + NodeSpacing);
 
 		public Form1()
 		{
 			InitializeComponent();
 			OnNewLayout(null, null);
-
-			WindowState = FormWindowState.Maximized;
 		}
 
 		protected override void OnPaint(PaintEventArgs e)
@@ -42,32 +47,29 @@ namespace RadialTree
 
 			e.Graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
 
-			DrawNode(e.Graphics, m_TreeRoot, (ClientSize.Width / 2), (ClientSize.Height / 2));
+			DrawNode(e.Graphics, m_TreeRoot, new Size((ClientSize.Width / 2), (ClientSize.Height / 2)));
 		}
 
-		protected void DrawNode(Graphics graphics, TreeNode<CustomType> node, float panelCentreX, float panelCentreY)
+		protected void DrawNode(Graphics graphics, RadialTree.TreeNode<CustomType> node, Size offset)
 		{
-			const float nodeRadius = 5;
-
-			float nodeX = panelCentreX + node.Point.X;
-			float nodeY = panelCentreY + node.Point.Y;
+			var nodePos = GetNodePosition(node, offset);
+			var nodeRect = GetNodeRectangle(node, offset);
 
 			if (node.Data.FillBrush != null)
 			{
-				graphics.FillEllipse(node.Data.FillBrush, nodeX - nodeRadius, nodeY - nodeRadius, nodeRadius * 2, nodeRadius * 2);
+				graphics.FillRectangle(node.Data.FillBrush, nodeRect);
 			}
 
 			if ((node.Parent != null) && (node.Parent.Data.LinePen != null))
 			{
-				float parentX = panelCentreX + node.Parent.Point.X;
-				float parentY = panelCentreY + node.Parent.Point.Y;
+				var parentPos = GetNodePosition(node.Parent, offset);
 
-				graphics.DrawLine(node.Parent.Data.LinePen, nodeX, nodeY, parentX, parentY);
+				graphics.DrawLine(node.Parent.Data.LinePen, nodePos, parentPos);
 			}
 
 			foreach (var child in node.Children)
 			{
-				DrawNode(graphics, child, panelCentreX, panelCentreY);
+				DrawNode(graphics, child, offset);
 			}
 		}
 
@@ -84,7 +86,7 @@ namespace RadialTree
 			const int nMinNodes = 1, nMaxNodes = 6;
 			Random rnd = new Random();
 
-			m_TreeRoot = new TreeNode<CustomType>(new CustomType(0, null, null));
+			m_TreeRoot = new RadialTree.TreeNode<CustomType>(new CustomType(0, null, null));
 
 			int iNodes = rnd.Next(nMinNodes, nMaxNodes);
 
@@ -109,16 +111,16 @@ namespace RadialTree
 				}
 			}
 
-			m_RadialTree = new RadialTree<CustomType>(m_TreeRoot, 50, -30);
-			//m_RadialTree = new RadialTree<uint>(m_TreeRoot, 50, 100);
-
-			m_RadialTree.CalculatePositions();
+			m_RadialTree = new RadialTree.RadialTree<CustomType>(m_TreeRoot, InitialRadius, RadialIncrement);
+			OnShowRootNode(null, null);
 
 			Invalidate();
 		}
 
 		private void OnShowRootNode(object sender, EventArgs e)
 		{
+			float initialRadius = InitialRadius;
+
 			if (ShowRootNode.Checked)
 			{
 				m_TreeRoot.Data.FillBrush = Brushes.Gray;
@@ -128,9 +130,24 @@ namespace RadialTree
 			{
 				m_TreeRoot.Data.FillBrush = null;
 				m_TreeRoot.Data.LinePen = null;
+
+				initialRadius = (m_TreeRoot.Count * -RadialIncrement) / (float)(2 * Math.PI);
 			}
+			m_RadialTree.CalculatePositions(initialRadius, RadialIncrement);
 
 			Invalidate();
+		}
+
+		private Rectangle GetNodeRectangle(RadialTree.TreeNode<CustomType> node, Size offset)
+		{
+			var pos = GetNodePosition(node, offset);
+
+			return new Rectangle((pos.X - NodeWidth / 2), (pos.Y - NodeHeight / 2), NodeWidth, NodeHeight);
+		}
+
+		private System.Drawing.Point GetNodePosition(RadialTree.TreeNode<CustomType> node, Size offset)
+		{
+			return new System.Drawing.Point((offset.Width + (int)node.Point.X), (offset.Height + (int)node.Point.Y));
 		}
 	}
 }

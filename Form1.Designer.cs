@@ -1,4 +1,4 @@
-﻿namespace RadialTree
+﻿namespace RadialTreeDemo
 {
 	partial class Form1
 	{

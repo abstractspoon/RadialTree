@@ -11,66 +11,81 @@ namespace RadialTree
 		List<float> m_Increments = null;
 		List<int> m_Counts = null;
 
-		float m_RadiusIncrement = 0f, m_InitialRadius = 0f;
+		float m_RadialIncrement = 50f, m_InitialRadius = 50f;
 		TreeNode<T> m_RootNode = null;
 
-		public RadialTree(TreeNode<T> rootNode, float initialRadius, float radiusIncrement)
+		public RadialTree(TreeNode<T> rootNode, float initialRadius, float radialIncrement)
 		{
 			if (rootNode.IsRoot)
 			{
 				m_RootNode = rootNode;
-				m_InitialRadius = initialRadius;
-
-				if (radiusIncrement < 0)
-				{
-					float spacing = -radiusIncrement;
-
-					// Count the nodes at every level
-					m_Counts = new List<int>();
-					int numLevels = CountNodes(rootNode, m_Counts);
-
-					// Convert the counts into equivalent minimum circumferences
-					m_Circumferences = new List<float>() { 0f };
-
-					for (int level = 1; level < numLevels; level++)
-					{
-						m_Circumferences.Add(m_Counts[level] * spacing);
-					}
-
-					// Convert the circumferences into equivalent normalised minimum radii
-					// and normalise
-					m_Radii = new List<float>() { 0f };
-
-					for (int level = 1; level < numLevels; level++)
-					{
-						m_Radii.Add(m_Circumferences[level] / (float)(2 * Math.PI));
-					}
-
-					// Convert the radii into equivalent radial increments
-					m_Increments = new List<float>() { 0f };
-
-					for (int level = 2; level < numLevels; level++)
-					{
-						m_Increments.Add((m_Radii[level] - initialRadius) / (level - 1));
-					}
-
-					// Get the maximum
-					m_RadiusIncrement = Math.Max(spacing, m_Increments.Max());
-				}
-				else
-				{
-					m_RadiusIncrement = radiusIncrement;
-				}
+				SetRadius(initialRadius, radialIncrement);
 			}
 		}
 
-		public bool CalculatePositions()
+		public float RadialIncrement { get { return m_RadialIncrement; } }
+
+		public void CalculatePositions()
 		{
-			CalculatePositions(m_RootNode, 0, (float)(2 * Math.PI), m_InitialRadius, m_RadiusIncrement);
-			return true;
+			CalculatePositions(m_RootNode, 0, (float)(2 * Math.PI), m_InitialRadius, m_RadialIncrement);
 		}
 
-		protected static void CalculatePositions(TreeNode<T> node, float startRadians, float endRadians, float circleRadius, float radiusIncrement)
+		public void CalculatePositions(float initialRadius, float radialIncrement)
+		{
+			SetRadius(initialRadius, radialIncrement);
+			CalculatePositions();
+		}
+
+		protected void SetRadius(float initialRadius, float radialIncrement)
+		{
+			if (m_RootNode == null)
+				return;
+
+			m_InitialRadius = initialRadius;
+
+			if (radialIncrement < 0)
+			{
+				float spacing = -radialIncrement;
+
+				// Count the nodes at every level
+				m_Counts = new List<int>();
+				int numLevels = CountNodes(m_RootNode, m_Counts);
+
+				// Convert the counts into equivalent minimum circumferences
+				m_Circumferences = new List<float>() { 0f };
+
+				for (int level = 1; level < numLevels; level++)
+				{
+					m_Circumferences.Add(m_Counts[level] * spacing);
+				}
+
+				// Convert the circumferences into equivalent normalised minimum radii
+				// and normalise
+				m_Radii = new List<float>() { 0f };
+
+				for (int level = 1; level < numLevels; level++)
+				{
+					m_Radii.Add(m_Circumferences[level] / (float)(2 * Math.PI));
+				}
+
+				// Convert the radii into equivalent radial increments
+				m_Increments = new List<float>() { 0f };
+
+				for (int level = 2; level < numLevels; level++)
+				{
+					m_Increments.Add((m_Radii[level] - m_InitialRadius) / (level - 1));
+				}
+
+				// Get the maximum
+				m_RadialIncrement = Math.Max(spacing, m_Increments.Max());
+			}
+			else
+			{
+				m_RadialIncrement = radialIncrement;
+			}
+		}
+
+		protected static void CalculatePositions(TreeNode<T> node, float startRadians, float endRadians, float circleRadius, float radialIncrement)
         {
             float theta = startRadians;
 			int leavesNumber = BreadthFirstSearch(node);
@@ -89,7 +104,7 @@ namespace RadialTree
                 if (child.Children.Count > 0)
                 {
 					// RECURSIVE CALL
-                    CalculatePositions(child, theta, mi, circleRadius + radiusIncrement, radiusIncrement);
+                    CalculatePositions(child, theta, mi, circleRadius + radialIncrement, radialIncrement);
                 }
 
                 theta = mi;
