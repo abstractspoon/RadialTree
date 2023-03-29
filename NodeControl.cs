@@ -23,6 +23,9 @@ namespace RadialTreeDemo
 		bool m_AutoCalcRadialIncrement = false;
 		bool m_EnableLayoutUpdates = true;
 
+		Point m_MinExtents = Point.Empty;
+		Point m_MaxExtents = Point.Empty;
+
 		// -------------------------------------------------------------------
 
 		public NodeControl()
@@ -119,8 +122,9 @@ namespace RadialTreeDemo
 			if (RootNode != null)
 			{
 				e.Graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+				var extents = Extents;
 
-				DrawNode(e.Graphics, RootNode, new Size((ClientSize.Width / 2), (ClientSize.Height / 2)));
+				DrawNode(e.Graphics, RootNode, new Size((extents.Width / 2), (extents.Height / 2)));
 			}
 		}
 
@@ -152,13 +156,77 @@ namespace RadialTreeDemo
 			}
 		}
 
+		public Rectangle Extents
+		{
+			get
+			{
+				return Rectangle.FromLTRB(m_MinExtents.X, m_MinExtents.Y, m_MaxExtents.X, m_MaxExtents.Y);
+			}
+		}
+
 		public void RecalcLayout()
 		{
 			if (m_EnableLayoutUpdates && (m_RadialTree != null))
 			{
 				m_RadialTree.CalculatePositions(m_InitialRadius, m_RadialIncrementOrSpacing);
+
+				RecalcExtents();
+				RefreshScrollbars();
 				Invalidate();
 			}
+		}
+
+		protected void RecalcExtents()
+		{
+			m_MinExtents = m_MaxExtents = Point.Empty;
+			RecalcExtents(RootNode);
+
+			const int Border = 50;
+			m_MinExtents -= new Size(Border, Border);
+			m_MaxExtents += new Size(Border, Border);
+
+		}
+
+		protected void RecalcExtents<T>(RadialTree.TreeNode<T> node)
+		{
+			var nodeRect = node.GetRectangle(NodeSize);
+
+			m_MinExtents.X = Math.Min(m_MinExtents.X, (int)nodeRect.Left);
+			m_MinExtents.Y = Math.Min(m_MinExtents.Y, (int)nodeRect.Top);
+
+			m_MaxExtents.X = Math.Max(m_MaxExtents.X, (int)nodeRect.Right);
+			m_MaxExtents.Y = Math.Max(m_MaxExtents.Y, (int)nodeRect.Bottom);
+
+			foreach (var child in node.Children)
+				RecalcExtents(child);
+		}
+
+		protected void RefreshScrollbars()
+		{
+			var extents = Extents;
+
+			HScroll = true;
+			VScroll = true;
+
+			HorizontalScroll.Minimum = extents.Left;
+			HorizontalScroll.Maximum = extents.Right;
+			HorizontalScroll.LargeChange = ClientRectangle.Width;
+			HorizontalScroll.Value = 0;
+			HorizontalScroll.Visible = (ClientRectangle.Width < extents.Width);
+
+			VerticalScroll.Minimum = extents.Top;
+			VerticalScroll.Maximum = extents.Bottom;
+			VerticalScroll.LargeChange = ClientRectangle.Height;
+			VerticalScroll.Value = 0;
+			VerticalScroll.Visible = (ClientRectangle.Height < extents.Height);
+		}
+
+		protected override void OnSizeChanged(EventArgs e)
+		{
+			base.OnSizeChanged(e);
+
+			RefreshScrollbars();
+			Invalidate();
 		}
 
 	}

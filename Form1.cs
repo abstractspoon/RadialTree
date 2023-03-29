@@ -18,13 +18,6 @@ namespace RadialTreeDemo
 			OnNewLayout(null, null);
 		}
 
-		protected override void OnSizeChanged(EventArgs e)
-		{
-			base.OnSizeChanged(e);
-
-			Invalidate();
-		}
-
 		private void OnNewLayout(object sender, EventArgs e)
 		{
 			uint nNode = 1;
