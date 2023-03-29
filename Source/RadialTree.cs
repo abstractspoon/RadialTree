@@ -4,41 +4,73 @@ using System.Collections.Generic;
 
 namespace RadialTree
 {
-    public class RadialTree
+    public class RadialTree<T>
     {
-		public static bool CalculatePositions<T>(TreeNode<T> rootNode, float initialRadius, float radiusIncrement)
+		List<float> m_Radii = null;
+		List<float> m_Circumferences = null;
+		List<float> m_Increments = null;
+		List<int> m_Counts = null;
+
+		float m_RadiusIncrement = 0f, m_InitialRadius = 0f;
+		TreeNode<T> m_RootNode = null;
+
+		public RadialTree(TreeNode<T> rootNode, float initialRadius, float radiusIncrement)
 		{
-			if (!rootNode.IsRoot)
-				return false;
-
-			if (radiusIncrement < 0)
+			if (rootNode.IsRoot)
 			{
-				float spacing = -radiusIncrement;
+				m_RootNode = rootNode;
+				m_InitialRadius = initialRadius;
 
-				// Count the nodes at every level
-				var counts = new List<int>();
-				int numLevels = CountNodes(rootNode, counts);
-
-				// Convert the counts into equivalent minimum radii
-				// and normalise
-				var radii = new List<float>();
-
-				for (int level = 0; level < numLevels; level++)
+				if (radiusIncrement < 0)
 				{
-					radii.Add((counts[level] * spacing) / (float)(2 * Math.PI));
-					radii[level] /= (level + 1);
+					float spacing = -radiusIncrement;
+
+					// Count the nodes at every level
+					m_Counts = new List<int>();
+					int numLevels = CountNodes(rootNode, m_Counts);
+
+					// Convert the counts into equivalent minimum circumferences
+					m_Circumferences = new List<float>() { 0f };
+
+					for (int level = 1; level < numLevels; level++)
+					{
+						m_Circumferences.Add(m_Counts[level] * spacing);
+					}
+
+					// Convert the circumferences into equivalent normalised minimum radii
+					// and normalise
+					m_Radii = new List<float>() { 0f };
+
+					for (int level = 1; level < numLevels; level++)
+					{
+						m_Radii.Add(m_Circumferences[level] / (float)(2 * Math.PI));
+					}
+
+					// Convert the radii into equivalent radial increments
+					m_Increments = new List<float>() { 0f };
+
+					for (int level = 2; level < numLevels; level++)
+					{
+						m_Increments.Add((m_Radii[level] - initialRadius) / (level - 1));
+					}
+
+					// Get the maximum
+					m_RadiusIncrement = Math.Max(spacing, m_Increments.Max());
 				}
-
-				// Get the maximum
-				initialRadius = radii[0];
-				radiusIncrement = radii.Max();
+				else
+				{
+					m_RadiusIncrement = radiusIncrement;
+				}
 			}
+		}
 
-			CalculatePositions<T>(rootNode, 0, (float)(2 * Math.PI), initialRadius, radiusIncrement);
+		public bool CalculatePositions()
+		{
+			CalculatePositions(m_RootNode, 0, (float)(2 * Math.PI), m_InitialRadius, m_RadiusIncrement);
 			return true;
 		}
 
-		protected static void CalculatePositions<T>(TreeNode<T> node, float startRadians, float endRadians, float circleRadius, float radiusIncrement)
+		protected static void CalculatePositions(TreeNode<T> node, float startRadians, float endRadians, float circleRadius, float radiusIncrement)
         {
             float theta = startRadians;
 			int leavesNumber = BreadthFirstSearch(node);
@@ -56,9 +88,7 @@ namespace RadialTree
 
                 if (child.Children.Count > 0)
                 {
-                    child.Point.Y = y;
-                    child.Point.X = x;
-
+					// RECURSIVE CALL
                     CalculatePositions(child, theta, mi, circleRadius + radiusIncrement, radiusIncrement);
                 }
 
@@ -66,7 +96,7 @@ namespace RadialTree
             }
         }
 
-		protected static int CountNodes<T>(TreeNode<T> node, IList<int> counts)
+		protected static int CountNodes(TreeNode<T> node, IList<int> counts)
 		{
 			if (node.Level >= counts.Count)
 				counts.Add(0);
@@ -144,7 +174,7 @@ namespace RadialTree
 		}
 */
 
-		private static int BreadthFirstSearch<T>(TreeNode<T> root)
+		private static int BreadthFirstSearch(TreeNode<T> root)
         {
             var visited = new List<TreeNode<T>>();
             var queue = new Queue<TreeNode<T>>();

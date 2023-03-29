@@ -11,81 +11,126 @@ namespace RadialTree
 {
 	public partial class Form1 : Form
 	{
-		TreeNode<uint> m_TreeRoot = new TreeNode<uint>(0);
+		protected class CustomType
+		{
+			public CustomType(uint id, Brush fillBrush = null, Pen linePen = null)
+			{
+				Id = id;
+				FillBrush = fillBrush;
+				LinePen = linePen;
+			}
+
+			public readonly uint Id;
+			public Brush FillBrush;
+			public Pen LinePen;
+		}
 		
+		TreeNode<CustomType> m_TreeRoot = null;
+		RadialTree<CustomType> m_RadialTree = null;
+
 		public Form1()
 		{
 			InitializeComponent();
+			OnNewLayout(null, null);
 
-			this.CenterToScreen();
-
-			uint nNode = 1;
-			const int nMinNodes = 3, nMaxNodes = 6;
-			Random rnd = new Random();
-
-			int iNodes = rnd.Next(nMinNodes, nMaxNodes);
-
-			for (int i = 0; i < iNodes; i++)
-			{
-				var iNode = m_TreeRoot.AddChild(nNode);
-				nNode++;
-
-				int jNodes = rnd.Next(nMinNodes, nMaxNodes);
-
-				for (int j = 0; j < jNodes; j++)
-				{
-					var jNode = iNode.AddChild(nNode);
-					nNode++;
-
-					int kNodes = rnd.Next(nMinNodes, nMaxNodes);
-
-					for (int k = 0; k < kNodes; k++)
-					{
-						var kNode = jNode.AddChild(nNode);
-					}
-				}
-			}
-
-			RadialTree.CalculatePositions(m_TreeRoot, 50, -50);
-			//RadialTree.CalculatePositions(m_TreeRoot, 50, 100);
+			WindowState = FormWindowState.Maximized;
 		}
 
 		protected override void OnPaint(PaintEventArgs e)
 		{
 			base.OnPaint(e);
 
-			if (m_TreeRoot.Count > 0)
+			e.Graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+
+			DrawNode(e.Graphics, m_TreeRoot, (ClientSize.Width / 2), (ClientSize.Height / 2));
+		}
+
+		protected void DrawNode(Graphics graphics, TreeNode<CustomType> node, float panelCentreX, float panelCentreY)
+		{
+			const float nodeRadius = 5;
+
+			float nodeX = panelCentreX + node.Point.X;
+			float nodeY = panelCentreY + node.Point.Y;
+
+			if (node.Data.FillBrush != null)
 			{
-				float centreX = ClientSize.Width / 2, centreY = ClientSize.Height / 2;
-				float radius = 15;
+				graphics.FillEllipse(node.Data.FillBrush, nodeX - nodeRadius, nodeY - nodeRadius, nodeRadius * 2, nodeRadius * 2);
+			}
 
-				foreach (var c1 in m_TreeRoot.Children)
+			if ((node.Parent != null) && (node.Parent.Data.LinePen != null))
+			{
+				float parentX = panelCentreX + node.Parent.Point.X;
+				float parentY = panelCentreY + node.Parent.Point.Y;
+
+				graphics.DrawLine(node.Parent.Data.LinePen, nodeX, nodeY, parentX, parentY);
+			}
+
+			foreach (var child in node.Children)
+			{
+				DrawNode(graphics, child, panelCentreX, panelCentreY);
+			}
+		}
+
+		protected override void OnSizeChanged(EventArgs e)
+		{
+			base.OnSizeChanged(e);
+
+			Invalidate();
+		}
+
+		private void OnNewLayout(object sender, EventArgs e)
+		{
+			uint nNode = 1;
+			const int nMinNodes = 1, nMaxNodes = 6;
+			Random rnd = new Random();
+
+			m_TreeRoot = new TreeNode<CustomType>(new CustomType(0, null, null));
+
+			int iNodes = rnd.Next(nMinNodes, nMaxNodes);
+
+			for (int i = 0; i < iNodes; i++)
+			{
+				var iNode = m_TreeRoot.AddChild(new CustomType(nNode, Brushes.Black, Pens.Purple));
+				nNode++;
+
+				int jNodes = rnd.Next(nMinNodes, nMaxNodes);
+
+				for (int j = 0; j < jNodes; j++)
 				{
-					float centre1X = centreX + c1.Point.X;
-					float centre1Y = centreY + c1.Point.Y;
+					var jNode = iNode.AddChild(new CustomType(nNode, Brushes.Blue, Pens.Teal));
+					nNode++;
 
-					e.Graphics.FillEllipse(Brushes.Black, centre1X - radius / 2, centre1Y - radius / 2, radius, radius);
+					int kNodes = rnd.Next(0, nMaxNodes);
 
-					foreach (var c2 in c1.Children)
+					for (int k = 0; k < kNodes; k++)
 					{
-						float centre2X = centreX + c2.Point.X;
-						float centre2Y = centreY + c2.Point.Y;
-
-						e.Graphics.FillEllipse(Brushes.Blue, centre2X - radius / 2, centre2Y - radius / 2, radius, radius);
-						e.Graphics.DrawLine(Pens.Purple, centre1X, centre1Y, centre2X, centre2Y);
-
-						foreach (var c3 in c2.Children)
-						{
-							float centre3X = centreX + c3.Point.X;
-							float centre3Y = centreY + c3.Point.Y;
-
-							e.Graphics.FillEllipse(Brushes.Red, centre3X - radius / 2, centre3Y - radius / 2, radius, radius);
-							e.Graphics.DrawLine(Pens.Teal, centre2X, centre2Y, centre3X, centre3Y);
-						}
+						var kNode = jNode.AddChild(new CustomType(nNode, Brushes.Red, null));
 					}
 				}
-
 			}
+
+			m_RadialTree = new RadialTree<CustomType>(m_TreeRoot, 50, -30);
+			//m_RadialTree = new RadialTree<uint>(m_TreeRoot, 50, 100);
+
+			m_RadialTree.CalculatePositions();
+
+			Invalidate();
+		}
+
+		private void OnShowRootNode(object sender, EventArgs e)
+		{
+			if (ShowRootNode.Checked)
+			{
+				m_TreeRoot.Data.FillBrush = Brushes.Gray;
+				m_TreeRoot.Data.LinePen = Pens.Gray;
+			}
+			else
+			{
+				m_TreeRoot.Data.FillBrush = null;
+				m_TreeRoot.Data.LinePen = null;
+			}
+
+			Invalidate();
 		}
 	}
 }
