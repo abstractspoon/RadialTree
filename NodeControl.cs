@@ -122,9 +122,14 @@ namespace RadialTreeDemo
 			if (RootNode != null)
 			{
 				e.Graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
-				var extents = Extents;
 
-				DrawNode(e.Graphics, RootNode, new Size((extents.Width / 2), (extents.Height / 2)));
+				var extents = Extents;
+				var offset = new Size((extents.Width / 2), (extents.Height / 2));
+
+				offset.Width -= HorizontalScroll.Value;
+				offset.Height -= VerticalScroll.Value;
+
+				DrawNode(e.Graphics, RootNode, offset);
 			}
 		}
 
@@ -171,7 +176,7 @@ namespace RadialTreeDemo
 				m_RadialTree.CalculatePositions(m_InitialRadius, m_RadialIncrementOrSpacing);
 
 				RecalcExtents();
-				RefreshScrollbars();
+				UpdateScrollbars();
 				Invalidate();
 			}
 		}
@@ -201,33 +206,38 @@ namespace RadialTreeDemo
 				RecalcExtents(child);
 		}
 
-		protected void RefreshScrollbars()
+		protected void UpdateScrollbars()
 		{
 			var extents = Extents;
 
-			HScroll = true;
-			VScroll = true;
+			AutoScrollMinSize = Extents.Size;
 
 			HorizontalScroll.Minimum = extents.Left;
 			HorizontalScroll.Maximum = extents.Right;
-			HorizontalScroll.LargeChange = ClientRectangle.Width;
-			HorizontalScroll.Value = 0;
-			HorizontalScroll.Visible = (ClientRectangle.Width < extents.Width);
+ 			HorizontalScroll.LargeChange = ClientRectangle.Width;
+			HorizontalScroll.SmallChange = 50;
 
 			VerticalScroll.Minimum = extents.Top;
 			VerticalScroll.Maximum = extents.Bottom;
-			VerticalScroll.LargeChange = ClientRectangle.Height;
-			VerticalScroll.Value = 0;
-			VerticalScroll.Visible = (ClientRectangle.Height < extents.Height);
+ 			VerticalScroll.LargeChange = ClientRectangle.Height;
+ 			VerticalScroll.SmallChange = 50;
 		}
 
 		protected override void OnSizeChanged(EventArgs e)
 		{
 			base.OnSizeChanged(e);
 
-			RefreshScrollbars();
+			UpdateScrollbars();
 			Invalidate();
 		}
+
+		protected override void OnScroll(ScrollEventArgs se)
+		{
+			base.OnScroll(se);
+
+			Invalidate();
+		}
+
 
 	}
 
