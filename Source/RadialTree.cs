@@ -14,7 +14,7 @@ namespace RadialTree
 		float m_RadialIncrement = 50f, m_InitialRadius = 50f;
 		TreeNode<T> m_RootNode = null;
 
-		public RadialTree(TreeNode<T> rootNode, float initialRadius, float radialIncrement)
+		public RadialTree(TreeNode<T> rootNode, float initialRadius = 50f, float radialIncrement = 50f)
 		{
 			if (rootNode.IsRoot)
 			{
@@ -60,7 +60,6 @@ namespace RadialTree
 				}
 
 				// Convert the circumferences into equivalent normalised minimum radii
-				// and normalise
 				m_Radii = new List<float>() { 0f };
 
 				for (int level = 1; level < numLevels; level++)
