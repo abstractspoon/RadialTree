@@ -32,6 +32,8 @@
 			this.m_ShowRootNode = new System.Windows.Forms.CheckBox();
 			this.m_NodeControl = new RadialTreeDemo.NodeControl();
 			this.m_CentreGraph = new System.Windows.Forms.Button();
+			this.ZoomIn = new System.Windows.Forms.Button();
+			this.ZoomOut = new System.Windows.Forms.Button();
 			this.SuspendLayout();
 			// 
 			// m_NewLayout
@@ -87,11 +89,33 @@
 			this.m_CentreGraph.UseVisualStyleBackColor = true;
 			this.m_CentreGraph.Click += new System.EventHandler(this.OnCentreGraph);
 			// 
+			// ZoomIn
+			// 
+			this.ZoomIn.Location = new System.Drawing.Point(417, 18);
+			this.ZoomIn.Name = "ZoomIn";
+			this.ZoomIn.Size = new System.Drawing.Size(131, 35);
+			this.ZoomIn.TabIndex = 3;
+			this.ZoomIn.Text = "Zoom In";
+			this.ZoomIn.UseVisualStyleBackColor = true;
+			this.ZoomIn.Click += new System.EventHandler(this.OnZoomIn);
+			// 
+			// ZoomOut
+			// 
+			this.ZoomOut.Location = new System.Drawing.Point(554, 18);
+			this.ZoomOut.Name = "ZoomOut";
+			this.ZoomOut.Size = new System.Drawing.Size(131, 35);
+			this.ZoomOut.TabIndex = 3;
+			this.ZoomOut.Text = "Zoom Out";
+			this.ZoomOut.UseVisualStyleBackColor = true;
+			this.ZoomOut.Click += new System.EventHandler(this.OnZoomOut);
+			// 
 			// Form1
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(770, 826);
+			this.Controls.Add(this.ZoomOut);
+			this.Controls.Add(this.ZoomIn);
 			this.Controls.Add(this.m_CentreGraph);
 			this.Controls.Add(this.m_NodeControl);
 			this.Controls.Add(this.m_ShowRootNode);
@@ -111,6 +135,8 @@
 		private System.Windows.Forms.CheckBox m_ShowRootNode;
 		private RadialTreeDemo.NodeControl m_NodeControl;
 		private System.Windows.Forms.Button m_CentreGraph;
+		private System.Windows.Forms.Button ZoomIn;
+		private System.Windows.Forms.Button ZoomOut;
 	}
 }
 
