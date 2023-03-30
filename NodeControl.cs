@@ -169,6 +169,24 @@ namespace RadialTreeDemo
 			}
 		}
 
+		public void CentreGraph()
+		{
+			var extents = Extents;
+
+			if (HorizontalScroll.Visible)
+			{
+				HorizontalScroll.Value = (extents.Width - ClientRectangle.Width) / 2;
+			}
+
+			if (VerticalScroll.Visible)
+			{
+				VerticalScroll.Value = (extents.Height - ClientRectangle.Height) / 2;
+			}
+
+			PerformLayout();
+			Invalidate();
+		}
+
 		public void RecalcLayout()
 		{
 			if (m_EnableLayoutUpdates && (m_RadialTree != null))

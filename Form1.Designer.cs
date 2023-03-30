@@ -31,6 +31,7 @@
 			this.m_NewLayout = new System.Windows.Forms.Button();
 			this.m_ShowRootNode = new System.Windows.Forms.CheckBox();
 			this.m_NodeControl = new RadialTreeDemo.NodeControl();
+			this.m_CentreGraph = new System.Windows.Forms.Button();
 			this.SuspendLayout();
 			// 
 			// m_NewLayout
@@ -64,7 +65,6 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.m_NodeControl.AutoCalculateRadialIncrement = false;
-			this.m_NodeControl.AutoScroll = false;
 			this.m_NodeControl.BackColor = System.Drawing.SystemColors.Window;
 			this.m_NodeControl.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
 			this.m_NodeControl.EnableLayoutUpdates = true;
@@ -77,11 +77,22 @@
 			this.m_NodeControl.Size = new System.Drawing.Size(732, 708);
 			this.m_NodeControl.TabIndex = 2;
 			// 
+			// m_CentreGraph
+			// 
+			this.m_CentreGraph.Location = new System.Drawing.Point(280, 18);
+			this.m_CentreGraph.Name = "m_CentreGraph";
+			this.m_CentreGraph.Size = new System.Drawing.Size(131, 35);
+			this.m_CentreGraph.TabIndex = 3;
+			this.m_CentreGraph.Text = "Centre Graph";
+			this.m_CentreGraph.UseVisualStyleBackColor = true;
+			this.m_CentreGraph.Click += new System.EventHandler(this.OnCentreGraph);
+			// 
 			// Form1
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(770, 826);
+			this.Controls.Add(this.m_CentreGraph);
 			this.Controls.Add(this.m_NodeControl);
 			this.Controls.Add(this.m_ShowRootNode);
 			this.Controls.Add(this.m_NewLayout);
@@ -99,6 +110,7 @@
 		private System.Windows.Forms.Button m_NewLayout;
 		private System.Windows.Forms.CheckBox m_ShowRootNode;
 		private RadialTreeDemo.NodeControl m_NodeControl;
+		private System.Windows.Forms.Button m_CentreGraph;
 	}
 }
 

@@ -77,5 +77,10 @@ namespace RadialTreeDemo
 				m_NodeControl.InitialRadius = ((m_NodeControl.RootNode.Count * m_NodeControl.RadialIncrementOrSpacing) / (float)(2 * Math.PI));
 			}
 		}
+
+		private void OnCentreGraph(object sender, EventArgs e)
+		{
+			m_NodeControl.CentreGraph();
+		}
 	}
 }
