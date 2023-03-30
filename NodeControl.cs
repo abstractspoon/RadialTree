@@ -11,11 +11,13 @@ namespace RadialTreeDemo
 {
 	public partial class NodeControl : UserControl
 	{
-		public Size NodeSize = new Size(50, 25);
 		public int NodeSpacing = 5;
 
 		float m_InitialRadius = 50f;
 		float m_RadialIncrementOrSpacing = 50f;
+		float m_ZoomFactor = 1f;
+
+		Size m_NodeSize;
 
 		RadialTree.TreeNode<CustomType> m_RootNode = null;
 		RadialTree.RadialTree<CustomType> m_RadialTree = null;
@@ -31,9 +33,39 @@ namespace RadialTreeDemo
 		public NodeControl()
 		{
 			m_InitialRadius = DefaultInitialRadius;
-			m_RadialIncrementOrSpacing = m_InitialRadius;
+			m_RadialIncrementOrSpacing = DefaultInitialRadius;
+			m_NodeSize = DefaulttNodeSize;
 
 			InitializeComponent();
+		}
+
+		public Size NodeSize
+		{
+			get { return m_NodeSize; }
+
+			set
+			{
+				if (value != m_NodeSize)
+				{
+					m_NodeSize = value;
+					RecalcLayout();
+				}
+			}
+		}
+
+		protected Size ZoomedNodeSize
+		{
+			get { return new Size((int)(m_NodeSize.Width * m_ZoomFactor), (int)(m_NodeSize.Height * m_ZoomFactor)); }
+		}
+
+		protected float ZoomedInitialRadius
+		{
+			get { return (m_InitialRadius * m_ZoomFactor); }
+		}
+
+		protected float ZoomedRadialIncrementOrSpacing
+		{
+			get { return (m_RadialIncrementOrSpacing * m_ZoomFactor); }
 		}
 
 		public bool AutoCalculateRadialIncrement
@@ -85,6 +117,11 @@ namespace RadialTreeDemo
 			get { return ((2 * NodeSize.Width) + NodeSpacing); }
 		}
 
+		public Size DefaulttNodeSize
+		{
+			get { return new Size(50, 25); }
+		}
+
 		public float InitialRadius
 		{
 			get { return m_InitialRadius; }
@@ -108,11 +145,40 @@ namespace RadialTreeDemo
 				if ((value != null) && (value != m_RootNode))
 				{
 					m_RootNode = value;
-					m_RadialTree = new RadialTree.RadialTree<CustomType>(value, m_InitialRadius, (AutoCalculateRadialIncrement ? -m_RadialIncrementOrSpacing : m_RadialIncrementOrSpacing));
+					m_RadialTree = new RadialTree.RadialTree<CustomType>(value);
 
 					RecalcLayout();
 				}
 			}
+		}
+
+		public bool CanZoomIn { get { return (m_ZoomFactor < 1.0f); } }
+		public bool CanZoomOut { get { return (m_ZoomFactor > 0.1f); } }
+
+		public bool ZoomIn()
+		{
+			if (CanZoomIn)
+			{
+				m_ZoomFactor += 0.1f;
+				RecalcLayout();
+
+				return true;
+			}
+
+			return false;
+		}
+
+		public bool ZoomOut()
+		{
+			if (CanZoomOut)
+			{
+				m_ZoomFactor -= 0.1f;
+				RecalcLayout();
+
+				return true;
+			}
+
+			return false;
 		}
 
 		protected override void OnPaint(PaintEventArgs e)
@@ -136,7 +202,7 @@ namespace RadialTreeDemo
 		protected void DrawNode(Graphics graphics, RadialTree.TreeNode<CustomType> node, Size offset)
 		{
 			var nodePos = node.GetPosition(offset);
-			var nodeRect = node.GetRectangle(NodeSize, offset);
+			var nodeRect = node.GetRectangle(ZoomedNodeSize, offset);
 
 			if (node.Data.NodeBrush != null)
 			{
@@ -191,7 +257,10 @@ namespace RadialTreeDemo
 		{
 			if (m_EnableLayoutUpdates && (m_RadialTree != null))
 			{
-				m_RadialTree.CalculatePositions(m_InitialRadius, m_RadialIncrementOrSpacing);
+				if (AutoCalculateRadialIncrement)
+					m_RadialTree.CalculatePositions(ZoomedInitialRadius, -ZoomedRadialIncrementOrSpacing);
+				else
+					m_RadialTree.CalculatePositions(ZoomedInitialRadius, ZoomedRadialIncrementOrSpacing);
 
 				AutoScrollMinSize = RecalcExtents();
 				Invalidate();

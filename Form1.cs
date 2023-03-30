@@ -12,7 +12,6 @@ namespace RadialTreeDemo
 	public partial class Form1 : Form
 	{
 		private readonly Size m_DefaultNodeSize = new Size(50, 25);
-		private float m_ZoomFactor = 1f;
 
 		public Form1()
 		{
@@ -87,31 +86,12 @@ namespace RadialTreeDemo
 
 		private void OnZoomIn(object sender, EventArgs e)
 		{
-			if (m_ZoomFactor < 1.0f)
-			{
-				m_ZoomFactor += 0.1f;
-				UpdateGraphZoom();
-			}
+			m_NodeControl.ZoomIn();
 		}
 
 		private void OnZoomOut(object sender, EventArgs e)
 		{
-			if (m_ZoomFactor > 0.1f)
-			{
-				m_ZoomFactor -= 0.1f;
-				UpdateGraphZoom();
-			}
-		}
-
-		private void UpdateGraphZoom()
-		{
-			m_NodeControl.EnableLayoutUpdates = false;
-
-			m_NodeControl.NodeSize = new Size((int)(m_DefaultNodeSize.Width * m_ZoomFactor), (int)(m_DefaultNodeSize.Height * m_ZoomFactor));
-			m_NodeControl.InitialRadius = (2 * m_DefaultNodeSize.Width * m_ZoomFactor);
-			m_NodeControl.RadialIncrementOrSpacing = (2 * m_DefaultNodeSize.Width * m_ZoomFactor);
-
-			m_NodeControl.EnableLayoutUpdates = true;
+			m_NodeControl.ZoomOut();
 		}
 	}
 }
