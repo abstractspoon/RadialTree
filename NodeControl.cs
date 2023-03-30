@@ -175,13 +175,12 @@ namespace RadialTreeDemo
 			{
 				m_RadialTree.CalculatePositions(m_InitialRadius, m_RadialIncrementOrSpacing);
 
-				RecalcExtents();
-				UpdateScrollbars();
+				AutoScrollMinSize = RecalcExtents();
 				Invalidate();
 			}
 		}
 
-		protected void RecalcExtents()
+		protected Size RecalcExtents()
 		{
 			m_MinExtents = m_MaxExtents = Point.Empty;
 			RecalcExtents(RootNode);
@@ -190,6 +189,7 @@ namespace RadialTreeDemo
 			m_MinExtents -= new Size(Border, Border);
 			m_MaxExtents += new Size(Border, Border);
 
+			return Extents.Size;
 		}
 
 		protected void RecalcExtents<T>(RadialTree.TreeNode<T> node)
@@ -206,28 +206,10 @@ namespace RadialTreeDemo
 				RecalcExtents(child);
 		}
 
-		protected void UpdateScrollbars()
-		{
-			var extents = Extents;
-
-			AutoScrollMinSize = Extents.Size;
-
-			HorizontalScroll.Minimum = extents.Left;
-			HorizontalScroll.Maximum = extents.Right;
- 			HorizontalScroll.LargeChange = ClientRectangle.Width;
-			HorizontalScroll.SmallChange = 50;
-
-			VerticalScroll.Minimum = extents.Top;
-			VerticalScroll.Maximum = extents.Bottom;
- 			VerticalScroll.LargeChange = ClientRectangle.Height;
- 			VerticalScroll.SmallChange = 50;
-		}
-
 		protected override void OnSizeChanged(EventArgs e)
 		{
 			base.OnSizeChanged(e);
 
-			UpdateScrollbars();
 			Invalidate();
 		}
 
@@ -236,6 +218,9 @@ namespace RadialTreeDemo
 			base.OnScroll(se);
 
 			Invalidate();
+
+			if (se.Type == ScrollEventType.ThumbPosition)
+				Update();
 		}
 
 

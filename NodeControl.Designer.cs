@@ -32,12 +32,12 @@
 			// 
 			// NodeControl
 			// 
-			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+			this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.AutoScroll = true;
 			this.DoubleBuffered = true;
+			this.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
 			this.Name = "NodeControl";
-			this.Size = new System.Drawing.Size(517, 423);
+			this.Size = new System.Drawing.Size(776, 651);
 			this.ResumeLayout(false);
 
 		}

@@ -35,9 +35,10 @@
 			// 
 			// m_NewLayout
 			// 
-			this.m_NewLayout.Location = new System.Drawing.Point(12, 12);
+			this.m_NewLayout.Location = new System.Drawing.Point(18, 18);
+			this.m_NewLayout.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
 			this.m_NewLayout.Name = "m_NewLayout";
-			this.m_NewLayout.Size = new System.Drawing.Size(75, 23);
+			this.m_NewLayout.Size = new System.Drawing.Size(112, 35);
 			this.m_NewLayout.TabIndex = 0;
 			this.m_NewLayout.Text = "New Layout";
 			this.m_NewLayout.UseVisualStyleBackColor = true;
@@ -48,9 +49,10 @@
 			this.m_ShowRootNode.AutoSize = true;
 			this.m_ShowRootNode.Checked = true;
 			this.m_ShowRootNode.CheckState = System.Windows.Forms.CheckState.Checked;
-			this.m_ShowRootNode.Location = new System.Drawing.Point(12, 41);
+			this.m_ShowRootNode.Location = new System.Drawing.Point(18, 63);
+			this.m_ShowRootNode.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
 			this.m_ShowRootNode.Name = "m_ShowRootNode";
-			this.m_ShowRootNode.Size = new System.Drawing.Size(101, 17);
+			this.m_ShowRootNode.Size = new System.Drawing.Size(147, 24);
 			this.m_ShowRootNode.TabIndex = 1;
 			this.m_ShowRootNode.Text = "Show root node";
 			this.m_ShowRootNode.UseVisualStyleBackColor = true;
@@ -62,26 +64,28 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.m_NodeControl.AutoCalculateRadialIncrement = false;
-			this.m_NodeControl.AutoScroll = true;
+			this.m_NodeControl.AutoScroll = false;
 			this.m_NodeControl.BackColor = System.Drawing.SystemColors.Window;
 			this.m_NodeControl.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
 			this.m_NodeControl.EnableLayoutUpdates = true;
 			this.m_NodeControl.InitialRadius = 45F;
-			this.m_NodeControl.Location = new System.Drawing.Point(12, 64);
+			this.m_NodeControl.Location = new System.Drawing.Point(18, 98);
+			this.m_NodeControl.Margin = new System.Windows.Forms.Padding(6, 8, 6, 8);
 			this.m_NodeControl.Name = "m_NodeControl";
 			this.m_NodeControl.RadialIncrementOrSpacing = 45F;
 			this.m_NodeControl.RootNode = null;
-			this.m_NodeControl.Size = new System.Drawing.Size(489, 461);
+			this.m_NodeControl.Size = new System.Drawing.Size(732, 708);
 			this.m_NodeControl.TabIndex = 2;
 			// 
 			// Form1
 			// 
-			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+			this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(513, 537);
+			this.ClientSize = new System.Drawing.Size(770, 826);
 			this.Controls.Add(this.m_NodeControl);
 			this.Controls.Add(this.m_ShowRootNode);
 			this.Controls.Add(this.m_NewLayout);
+			this.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
 			this.Name = "Form1";
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
 			this.Text = "Form1";
