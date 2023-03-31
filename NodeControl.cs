@@ -201,7 +201,23 @@ namespace RadialTreeDemo
 
 		protected void DrawNode(Graphics graphics, RadialTree.TreeNode<CustomType> node, Size offset)
 		{
+			// Draw children first so that nodes get drawn over lines
+			foreach (var child in node.Children)
+			{
+				DrawNode(graphics, child, offset);
+			}
+
+			// Draw lines first
 			var nodePos = node.GetPosition(offset);
+
+			if ((node.Parent != null) && (node.Parent.Data.LinePen != null))
+			{
+				var parentPos = node.Parent.GetPosition(offset);
+
+				graphics.DrawLine(node.Parent.Data.LinePen, nodePos, parentPos);
+			}
+
+			// Then node itself
 			var nodeRect = node.GetRectangle(ZoomedNodeSize, offset);
 
 			if (node.Data.NodeBrush != null)
@@ -212,18 +228,6 @@ namespace RadialTreeDemo
 			if (node.Data.NodePen != null)
 			{
 				graphics.DrawRectangle(node.Data.NodePen, nodeRect);
-			}
-
-			if ((node.Parent != null) && (node.Parent.Data.LinePen != null))
-			{
-				var parentPos = node.Parent.GetPosition(offset);
-
-				graphics.DrawLine(node.Parent.Data.LinePen, nodePos, parentPos);
-			}
-
-			foreach (var child in node.Children)
-			{
-				DrawNode(graphics, child, offset);
 			}
 		}
 
@@ -272,7 +276,7 @@ namespace RadialTreeDemo
 			m_MinExtents = m_MaxExtents = Point.Empty;
 			RecalcExtents(RootNode);
 
-			const int Border = 50;
+			int Border = (int)(50 * m_ZoomFactor);
 			m_MinExtents -= new Size(Border, Border);
 			m_MaxExtents += new Size(Border, Border);
 

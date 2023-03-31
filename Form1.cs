@@ -25,27 +25,27 @@ namespace RadialTreeDemo
 			const int nMinNodes = 1, nMaxNodes = 6;
 			Random rnd = new Random();
 
-			var rootNode = new RadialTree.TreeNode<CustomType>(new CustomType(0, null, null));
+			var rootNode = new RadialTree.TreeNode<CustomType>(new CustomType(0, Pens.Gray, SystemBrushes.Window, Pens.Gray));
 
 			int iNodes = rnd.Next(nMinNodes, nMaxNodes);
 
 			for (int i = 0; i < iNodes; i++)
 			{
-				var iNode = rootNode.AddChild(new CustomType(nNode, Pens.Black, null, Pens.Purple));
+				var iNode = rootNode.AddChild(new CustomType(nNode, Pens.Black, SystemBrushes.Window, Pens.Purple));
 				nNode++;
 
 				int jNodes = rnd.Next(nMinNodes, nMaxNodes);
 
 				for (int j = 0; j < jNodes; j++)
 				{
-					var jNode = iNode.AddChild(new CustomType(nNode, Pens.Blue, null, Pens.Teal));
+					var jNode = iNode.AddChild(new CustomType(nNode, Pens.Blue, SystemBrushes.Window, Pens.Teal));
 					nNode++;
 
 					int kNodes = rnd.Next(0, nMaxNodes);
 
 					for (int k = 0; k < kNodes; k++)
 					{
-						var kNode = jNode.AddChild(new CustomType(nNode, Pens.Red, null, null));
+						var kNode = jNode.AddChild(new CustomType(nNode, Pens.Red, SystemBrushes.Window, null));
 					}
 				}
 			}
@@ -65,7 +65,8 @@ namespace RadialTreeDemo
 
 		private void ShowRootNode(bool show)
 		{
-			m_NodeControl.RootNode.Data.NodeBrush = (show ? Brushes.Gray : null);
+			m_NodeControl.RootNode.Data.NodePen = (show ? Pens.Gray : null);
+			m_NodeControl.RootNode.Data.NodeBrush = (show ? SystemBrushes.Window : null);
 			m_NodeControl.RootNode.Data.LinePen = (show ? Pens.Gray : null);
 
 			if (show)
