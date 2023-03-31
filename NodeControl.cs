@@ -310,7 +310,24 @@ namespace RadialTreeDemo
 				Update();
 		}
 
-
+		protected override void OnMouseWheel(MouseEventArgs e)
+		{
+			if ((ModifierKeys & Keys.Control) == Keys.Control)
+			{
+				if (e.Delta > 0)
+				{
+					ZoomIn();
+				}
+				else
+				{
+					ZoomOut();
+				}
+			}
+			else
+			{
+				base.OnMouseWheel(e);
+			}
+		}
 	}
 
 	public class CustomType
